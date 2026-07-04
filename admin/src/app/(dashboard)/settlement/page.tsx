@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getCurrentAdmin } from "@/server/auth/current-admin";
-import { db } from "@/server/db";
+import { getGlobalSettings } from "@/server/services/effective-config";
 import { listDrivers } from "@/server/services/driver-service";
 import { recordCashCollection, getCashCollectionEntriesForDate } from "@/server/services/cash-collection-service";
 import { recordCashCollectionSchema } from "@/lib/validation";
@@ -13,11 +13,7 @@ function todayDateString(): string {
 }
 
 async function getPriceTiers(): Promise<number[]> {
-  const settings = await db.globalSettings.upsert({
-    where: { id: "singleton" },
-    update: {},
-    create: { id: "singleton" },
-  });
+  const settings = await getGlobalSettings();
   return settings.priceTiers as unknown as number[];
 }
 

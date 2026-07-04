@@ -2,27 +2,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { Decimal } from "@prisma/client-runtime-utils";
 import { requireDriverAuth, AuthError } from "@/server/auth/driver-auth";
 import { db } from "@/server/db";
-import { getEffectiveConfig } from "@/server/services/effective-config";
-import { computeMfiSummary } from "@/server/services/mfi-summary";
+import { getEffectiveConfig, getGlobalSettings } from "@/server/services/effective-config";
+import { computeMfiSummaryFromValues } from "@/server/services/mfi-summary";
 
 const CADENCE_DAYS: Record<string, number> = { DAILY: 1, WEEKLY: 7, MONTHLY: 30 };
 
 export async function GET(request: NextRequest) {
   try {
     const driverId = await requireDriverAuth(request);
-    const driver = await db.driver.findUniqueOrThrow({ where: { id: driverId } });
-    const settings = await db.globalSettings.upsert({
-      where: { id: "singleton" },
-      update: {},
-      create: { id: "singleton" },
-    });
+    // None of these four reads depend on each other's results, only on driverId — batching them
+    // turns 4 sequential DB round-trips into 1, which matters a lot given the network latency
+    // between where this runs and the database.
+    const [driver, settings, recentSettlements, paidAgg] = await Promise.all([
+      db.driver.findUniqueOrThrow({ where: { id: driverId } }),
+      getGlobalSettings(),
+      db.settlement.findMany({ where: { driverId, status: "ACTIVE" }, orderBy: { periodIndex: "desc" }, take: 6 }),
+      db.settlement.aggregate({ where: { driverId, status: "ACTIVE" }, _sum: { saccoPaymentPaid: true } }),
+    ]);
     const config = getEffectiveConfig(driver, settings);
-
-    const recentSettlements = await db.settlement.findMany({
-      where: { driverId, status: "ACTIVE" },
-      orderBy: { periodIndex: "desc" },
-      take: 6,
-    });
 
     const latest = recentSettlements[0] ?? null;
     const recoveredAfter = latest ? new Decimal(latest.cumulativeToloRecoveredAfter) : new Decimal(0);
@@ -49,7 +46,8 @@ export async function GET(request: NextRequest) {
         ? new Date(Date.now() + estimatedPeriodsRemaining * cadenceDays * 24 * 60 * 60 * 1000).toISOString()
         : null;
 
-    const mfi = await computeMfiSummary(driver, config);
+    const paidSoFar = new Decimal(paidAgg._sum.saccoPaymentPaid ?? 0);
+    const mfi = computeMfiSummaryFromValues(driver, config, paidSoFar);
 
     return NextResponse.json({
       recovery: {

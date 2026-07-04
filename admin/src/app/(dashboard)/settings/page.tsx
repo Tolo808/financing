@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { getCurrentAdmin } from "@/server/auth/current-admin";
 import { db } from "@/server/db";
 import { writeAuditLog } from "@/server/services/audit-service";
+import { getGlobalSettings } from "@/server/services/effective-config";
 import { updateGlobalSettingsSchema } from "@/lib/validation";
 
 async function updateSettingsAction(formData: FormData) {
@@ -43,11 +44,7 @@ async function updateSettingsAction(formData: FormData) {
 }
 
 export default async function SettingsPage() {
-  const settings = await db.globalSettings.upsert({
-    where: { id: "singleton" },
-    update: {},
-    create: { id: "singleton" },
-  });
+  const settings = await getGlobalSettings();
 
   return (
     <div className="space-y-8">

@@ -3,13 +3,10 @@ import { getCurrentAdmin } from "@/server/auth/current-admin";
 import { updateGlobalSettingsSchema } from "@/lib/validation";
 import { db } from "@/server/db";
 import { writeAuditLog } from "@/server/services/audit-service";
+import { getGlobalSettings } from "@/server/services/effective-config";
 
 export async function GET() {
-  const settings = await db.globalSettings.upsert({
-    where: { id: "singleton" },
-    update: {},
-    create: { id: "singleton" },
-  });
+  const settings = await getGlobalSettings();
   return NextResponse.json({ settings });
 }
 

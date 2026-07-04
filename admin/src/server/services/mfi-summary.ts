@@ -1,6 +1,5 @@
 import { Decimal } from "@prisma/client-runtime-utils";
 import type { Driver } from "@prisma/client";
-import { db } from "@/server/db";
 import type { PeriodConfig } from "@/server/finance/types";
 import { PERIODS_PER_MONTH } from "./effective-config";
 
@@ -26,8 +25,8 @@ type DriverTermCadence = Pick<Driver, "termMonths" | "cadence">;
  * installment, floored), independent of arrears timing — a driver who has paid 2.5 months'
  * worth across uneven periods shows 2 months paid, not a fractional month.
  *
- * Pure / DB-free so it's directly unit-testable; `computeMfiSummary` below wraps it with the
- * DB read for `paidSoFar`.
+ * Pure / DB-free so it's directly unit-testable — callers fetch `paidSoFar` themselves
+ * (usually already have it on hand from a ledger query they needed anyway).
  */
 export function computeMfiSummaryFromValues(
   driver: DriverTermCadence,
@@ -56,16 +55,4 @@ export function computeMfiSummaryFromValues(
     monthsPaid,
     monthsRemaining,
   };
-}
-
-type DriverIdTermCadence = Pick<Driver, "id" | "termMonths" | "cadence">;
-
-export async function computeMfiSummary(driver: DriverIdTermCadence, config: PeriodConfig): Promise<MfiSummary> {
-  const paidAgg = await db.settlement.aggregate({
-    where: { driverId: driver.id, status: "ACTIVE" },
-    _sum: { saccoPaymentPaid: true },
-  });
-  const paidSoFar = new Decimal(paidAgg._sum.saccoPaymentPaid ?? 0);
-
-  return computeMfiSummaryFromValues(driver, config, paidSoFar);
 }

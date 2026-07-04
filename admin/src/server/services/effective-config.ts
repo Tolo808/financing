@@ -1,6 +1,22 @@
 import { Decimal } from "@prisma/client-runtime-utils";
 import type { Cadence, Driver, GlobalSettings } from "@prisma/client";
 import type { PeriodConfig } from "@/server/finance/types";
+import { db } from "@/server/db";
+
+// The GlobalSettings singleton almost always already exists, so a plain read is enough —
+// `upsert` (used everywhere this used to be inlined) always issues a write-capable
+// INSERT ... ON CONFLICT even when nothing changes, which is needless extra DB round-trip
+// cost on every single page load. Only falls back to creating the row on the rare cold-start
+// case where it's genuinely missing (e.g. a fresh database that hasn't been seeded yet).
+export async function getGlobalSettings(): Promise<GlobalSettings> {
+  const existing = await db.globalSettings.findUnique({ where: { id: "singleton" } });
+  if (existing) return existing;
+  return db.globalSettings.upsert({
+    where: { id: "singleton" },
+    update: {},
+    create: { id: "singleton" },
+  });
+}
 
 // A driver's SACCo installment is a static monthly figure; this converts it into the
 // per-period amount actually charged, based on how often settlements are recorded.

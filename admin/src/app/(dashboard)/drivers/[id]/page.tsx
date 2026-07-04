@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { Decimal } from "@prisma/client-runtime-utils";
 import { getCurrentAdmin } from "@/server/auth/current-admin";
 import { getDriver, updateDriver } from "@/server/services/driver-service";
 import {
@@ -8,10 +9,9 @@ import {
   recordOrCorrectSettlement,
   deleteLatestSettlement,
 } from "@/server/services/settlement-service";
-import { getEffectiveConfig } from "@/server/services/effective-config";
-import { computeMfiSummary } from "@/server/services/mfi-summary";
+import { getEffectiveConfig, getGlobalSettings } from "@/server/services/effective-config";
+import { computeMfiSummaryFromValues } from "@/server/services/mfi-summary";
 import { updateDriverSchema, recordSettlementSchema } from "@/lib/validation";
-import { db } from "@/server/db";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 
 async function updateDriverAction(id: string, formData: FormData) {
@@ -84,13 +84,13 @@ export default async function DriverDetailPage({
 }) {
   const { id } = await params;
   const sp = await searchParams;
-  const driver = await getDriver(id);
-  if (!driver) notFound();
 
-  const [ledger, settings] = await Promise.all([
+  const [driver, ledger, settings] = await Promise.all([
+    getDriver(id),
     getDriverLedger(id, false),
-    db.globalSettings.upsert({ where: { id: "singleton" }, update: {}, create: { id: "singleton" } }),
+    getGlobalSettings(),
   ]);
+  if (!driver) notFound();
   const latestPeriodIndex = ledger.length > 0 ? Math.max(...ledger.map((s) => s.periodIndex)) : 0;
   const nextPeriodIndex = latestPeriodIndex + 1;
 
@@ -98,7 +98,10 @@ export default async function DriverDetailPage({
   const editingEntry = editPeriodIndex ? ledger.find((s) => s.periodIndex === editPeriodIndex) : undefined;
 
   const config = getEffectiveConfig(driver, settings);
-  const mfi = await computeMfiSummary(driver, config);
+  // ledger already holds every ACTIVE settlement for this driver, so the total paid-so-far can
+  // be summed here instead of computeMfiSummary's usual separate aggregate query.
+  const paidSoFar = ledger.reduce((sum, s) => sum.plus(s.saccoPaymentPaid), new Decimal(0));
+  const mfi = computeMfiSummaryFromValues(driver, config, paidSoFar);
 
   const latest = ledger.at(-1);
   const toloTarget = Number(config.toloTargetBirr);

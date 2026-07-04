@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/server/db";
 import { getCashCollectionEntriesForDate } from "@/server/services/cash-collection-service";
+import { getGlobalSettings } from "@/server/services/effective-config";
 import { toCsv } from "@/server/csv";
 
 export async function GET(request: NextRequest) {
   const date = request.nextUrl.searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
 
-  const settings = await db.globalSettings.upsert({
-    where: { id: "singleton" },
-    update: {},
-    create: { id: "singleton" },
-  });
+  const [settings, entries] = await Promise.all([getGlobalSettings(), getCashCollectionEntriesForDate(date)]);
   const priceTiers = settings.priceTiers as unknown as number[];
-
-  const entries = await getCashCollectionEntriesForDate(date);
   const rows = entries.map((entry) => {
     const counts = entry.tierCounts as unknown as Record<string, number>;
     const tierColumns = Object.fromEntries(priceTiers.map((p) => [String(p), counts[String(p)] ?? 0]));

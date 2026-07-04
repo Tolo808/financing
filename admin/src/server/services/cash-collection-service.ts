@@ -2,6 +2,7 @@ import { Decimal } from "@prisma/client-runtime-utils";
 import { db } from "@/server/db";
 import { recordOrCorrectSettlement } from "./settlement-service";
 import { writeAuditLog } from "./audit-service";
+import { getGlobalSettings } from "./effective-config";
 import { toJsonSafe } from "@/lib/decimal";
 
 export interface RecordCashCollectionInput {
@@ -26,11 +27,7 @@ function parseDateOnly(date: string): Date {
 export async function recordCashCollection(input: RecordCashCollectionInput, actorAdminId: string) {
   const dateOnly = parseDateOnly(input.date);
 
-  const settings = await db.globalSettings.upsert({
-    where: { id: "singleton" },
-    update: {},
-    create: { id: "singleton" },
-  });
+  const settings = await getGlobalSettings();
   const priceTiers = settings.priceTiers as unknown as number[];
 
   let totalBirr = new Decimal(0);
