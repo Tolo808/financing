@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+enum Cadence {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum SettlementStatus {
+  ACTIVE
+  SUPERSEDED
+}
+
+enum ActorType {
+  ADMIN
+  SYSTEM
+}
+
+enum NotificationType {
+  SETTLEMENT_PROCESSED
+  MILESTONE_25
+  MILESTONE_50
+  MILESTONE_75
+  MILESTONE_100
+  TOLO_TARGET_REACHED
+}
+
+enum DepositStatus {
+  PENDING
+  DEPOSITED
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String?
+  authUserId   String?   @unique
+  name         String
+  role         AdminRole @default(ADMIN)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  settlementsCreated    Settlement[]          @relation("SettlementCreatedBy")
+  auditLogs             AuditLog[]            @relation("AuditLogActorAdmin")
+  cashCollectionEntries CashCollectionEntry[]
+
+  @@map("admin_users")
+}
+
+model Driver {
+  id                 String  @id @default(cuid())
+  name               String
+  phone              String  @unique
+  pinHash            String?
+  authUserId         String? @unique
+  saccoFinancedTotal Decimal @db.Decimal(14, 2)
+  termMonths         Int
+  cadence            Cadence @default(MONTHLY)
+
+  // per-driver overrides; null = fall back to GlobalSettings default
+  toloTargetBirrOverride  Decimal? @db.Decimal(14, 2)
+  toloRatePercentOverride Decimal? @db.Decimal(5, 2)
+
+  active    Boolean  @default(true)
+  language  String   @default("en")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  settlements           Settlement[]
+  notifications         Notification[]
+  cashCollectionEntries CashCollectionEntry[]
+
+  @@map("drivers")
+}
+
+model GlobalSettings {
+  id               String   @id @default("singleton")
+  toloTargetBirr   Decimal  @default(70000) @db.Decimal(14, 2)
+  toloRatePercent  Decimal  @default(35.00) @db.Decimal(5, 2)
+  priceTiers       Json     @default("[150,250,350,450]")
+  updatedAt        DateTime @updatedAt
+  updatedByAdminId String?
+
+  @@map("global_settings")
+}
+
+model Settlement {
+  id       String @id @default(cuid())
+  driverId String
+  driver   Driver @relation(fields: [driverId], references: [id])
+
+  periodIndex Int
+  periodStart DateTime
+  periodEnd   DateTime
+
+  earnings                       Decimal @db.Decimal(14, 2)
+  toloRatePercentApplied         Decimal @db.Decimal(5, 2)
+  toloCut                        Decimal @db.Decimal(14, 2)
+  saccoFixedInstallment          Decimal @db.Decimal(14, 2)
+  saccoPaymentDue                Decimal @db.Decimal(14, 2)
+  saccoPaymentPaid               Decimal @db.Decimal(14, 2)
+  arrearsCarriedIn               Decimal @db.Decimal(14, 2)
+  arrearsCarriedOut              Decimal @db.Decimal(14, 2)
+  cumulativeToloRecoveredBefore  Decimal @db.Decimal(14, 2)
+  cumulativeToloRecoveredAfter   Decimal @db.Decimal(14, 2)
+  takeHome                       Decimal @db.Decimal(14, 2)
+
+  status       SettlementStatus @default(ACTIVE)
+  supersedes   Settlement?      @relation("SettlementSupersession", fields: [supersedesId], references: [id])
+  supersedesId String?          @unique
+  supersededBy Settlement?      @relation("SettlementSupersession")
+
+  createdByAdminId String
+  createdByAdmin    AdminUser @relation("SettlementCreatedBy", fields: [createdByAdminId], references: [id])
+  createdAt         DateTime  @default(now())
+
+  cashCollectionEntry CashCollectionEntry?
+
+  @@index([driverId, periodIndex, status])
+  @@map("settlements")
+}
+
+model CashCollectionEntry {
+  id       String @id @default(cuid())
+  driverId String
+  driver   Driver @relation(fields: [driverId], references: [id])
+
+  date          DateTime      @db.Date
+  tierCounts    Json
+  totalBirr     Decimal       @db.Decimal(14, 2)
+  collectedBirr Decimal       @db.Decimal(14, 2)
+  uncollectedBirr Decimal     @db.Decimal(14, 2)
+  depositStatus DepositStatus @default(PENDING)
+
+  settlementId String?     @unique
+  settlement   Settlement? @relation(fields: [settlementId], references: [id])
+
+  createdByAdminId String
+  createdByAdmin    AdminUser @relation(fields: [createdByAdminId], references: [id])
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([driverId, date])
+  @@index([date])
+  @@map("cash_collection_entries")
+}
+
+model AuditLog {
+  id           String     @id @default(cuid())
+  entityType   String
+  entityId     String
+  action       String
+  beforeJson   Json?
+  afterJson    Json?
+  actorType    ActorType
+  actorAdminId String?
+  actorAdmin   AdminUser? @relation("AuditLogActorAdmin", fields: [actorAdminId], references: [id])
+  createdAt    DateTime   @default(now())
+
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  driverId  String
+  driver    Driver           @relation(fields: [driverId], references: [id])
+  type      NotificationType
+  message   String
+  createdAt DateTime         @default(now())
+  readAt    DateTime?
+
+  @@index([driverId, readAt])
+  @@map("notifications")
+}

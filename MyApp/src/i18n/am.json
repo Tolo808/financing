@@ -1,0 +1,54 @@
+{
+  "common": {
+    "birr": "ብር",
+    "loading": "በመጫን ላይ...",
+    "retry": "እንደገና ሞክር",
+    "signOut": "ውጣ"
+  },
+  "login": {
+    "title": "ቶሎ ሹፌር",
+    "phone": "ስልክ ቁጥር",
+    "pin": "ፒን",
+    "signIn": "ግባ",
+    "error": "ልክ ያልሆነ ስልክ ቁጥር ወይም ፒን"
+  },
+  "tabs": {
+    "dashboard": "መነሻ",
+    "history": "ታሪክ",
+    "notifications": "ማሳወቂያዎች"
+  },
+  "dashboard": {
+    "recoveryProgress": "የቶሎ መልሶ ማግኛ እድገት",
+    "recovered": "የተመለሰ",
+    "remaining": "የቀረ",
+    "estimatedCompletion": "የሚጠናቀቅበት ግምት",
+    "currentPeriod": "የዚህ ወቅት",
+    "earnings": "ገቢ",
+    "toloCut": "ለቶሎ",
+    "saccoPayment": "ለሳኮ",
+    "takeHome": "የእርስዎ ተከፋይ",
+    "arrears": "ወደ ቀጣዩ ወቅት የተላለፈ",
+    "noPeriod": "እስካሁን ምንም ክፍያ አልተመዘገበም",
+    "targetReached": "የቶሎ መዋጮ ሙሉ በሙሉ ተመልሷል!",
+    "mfiRemaining": "የMFI ቀሪ ክፍያ",
+    "mfiPaid": "የተከፈለ",
+    "mfiTotal": "ጠቅላላ ዕዳ",
+    "mfiCleared": "የMFI ብድር ሙሉ በሙሉ ተከፍሏል!",
+    "monthsRemaining": "ወራት ቀርተዋል",
+    "monthsPaidOf": "{{paid}} ከ{{term}} ወራት ተከፍሏል"
+  },
+  "history": {
+    "title": "የክፍያ ታሪክ",
+    "period": "ወቅት",
+    "empty": "እስካሁን የክፍያ ታሪክ የለም"
+  },
+  "notifications": {
+    "title": "ማሳወቂያዎች",
+    "empty": "እስካሁን ማሳወቂያ የለም"
+  },
+  "language": {
+    "label": "ቋንቋ",
+    "en": "English",
+    "am": "አማርኛ"
+  }
+}

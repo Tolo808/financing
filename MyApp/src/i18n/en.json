@@ -1,0 +1,54 @@
+{
+  "common": {
+    "birr": "Birr",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "title": "Tolo Driver",
+    "phone": "Phone number",
+    "pin": "PIN",
+    "signIn": "Sign in",
+    "error": "Invalid phone number or PIN"
+  },
+  "tabs": {
+    "dashboard": "Home",
+    "history": "History",
+    "notifications": "Notifications"
+  },
+  "dashboard": {
+    "recoveryProgress": "Tolo Recovery Progress",
+    "recovered": "Recovered",
+    "remaining": "Remaining",
+    "estimatedCompletion": "Estimated completion",
+    "currentPeriod": "This Period",
+    "earnings": "Earnings",
+    "toloCut": "To Tolo",
+    "saccoPayment": "To SACCo",
+    "takeHome": "Your Take-Home",
+    "arrears": "Carried over to next period",
+    "noPeriod": "No settlements recorded yet",
+    "targetReached": "Tolo's contribution is fully recovered!",
+    "mfiRemaining": "MFI Remaining Payment",
+    "mfiPaid": "Paid",
+    "mfiTotal": "Total owed",
+    "mfiCleared": "MFI loan fully paid off!",
+    "monthsRemaining": "months remaining",
+    "monthsPaidOf": "{{paid}} of {{term}} months paid"
+  },
+  "history": {
+    "title": "Payment History",
+    "period": "Period",
+    "empty": "No payment history yet"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet"
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "am": "አማርኛ"
+  }
+}
