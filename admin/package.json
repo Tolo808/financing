@@ -22,7 +22,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@supabase/cli-windows-x64": "^2.109.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
@@ -31,7 +30,6 @@
     "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
-    "supabase": "^2.109.0",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5",
