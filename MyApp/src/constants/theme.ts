@@ -7,8 +7,8 @@ import '@/global.css';
 
 import { Platform } from 'react-native';
 
-// Royal blue palette — matches the admin portal exactly (royal-50 through royal-900)
-// so the driver app and admin portal read as one product.
+// Royal blue palette — kept for reference/back-compat, no longer the driver app's primary
+// palette (see Navy below). Still matches the admin portal's royal-50 through royal-900.
 export const Royal = {
   50: '#eef2ff',
   100: '#e0e7ff',
@@ -22,32 +22,46 @@ export const Royal = {
   900: '#1a2875',
 } as const;
 
+// Navy palette — the driver app's own premium identity: a deep navy surface, a bright
+// "blueLight" accent for actions/highlights, and a slate text scale for readable contrast on
+// dark. Distinct from the admin portal's royal-blue-on-white by deliberate choice.
+export const Navy = {
+  50: '#7FB8FF', // blueLight, soft/secondary accent
+  100: '#4F9CF9', // blueLight, primary accent
+  200: '#8B98AF', // slate, secondary text
+  300: '#E7ECF3', // slate, primary text
+  700: '#26395C', // navy, border/divider — visible against both bg and card
+  800: '#13213A', // navy, elevated surface (cards)
+  850: '#1B2E4D', // navy, selected/pressed state — clearly lighter than a card
+  900: '#0A1120', // navy, base background — darkest
+} as const;
+
 export const Colors = {
   light: {
-    text: '#0F1222',
-    background: '#ffffff',
-    backgroundElement: '#F4F5FB',
-    backgroundSelected: Royal[50],
-    textSecondary: '#6B7080',
-    primary: Royal[700],
-    onPrimary: '#ffffff',
-    accent: Royal[500],
-    success: '#0E8A3E',
-    danger: '#D1293D',
-    border: '#E7E8F2',
+    text: Navy[300],
+    background: Navy[900],
+    backgroundElement: Navy[800],
+    backgroundSelected: Navy[850],
+    textSecondary: Navy[200],
+    primary: Navy[100],
+    onPrimary: Navy[900],
+    accent: Navy[50],
+    success: '#34D399',
+    danger: '#F87171',
+    border: Navy[700],
   },
   dark: {
-    text: '#F5F6FF',
-    background: '#0B0E1A',
-    backgroundElement: '#151A2E',
-    backgroundSelected: Royal[900],
-    textSecondary: '#9AA0B8',
-    primary: Royal[400],
-    onPrimary: '#0F1222',
-    accent: Royal[300],
-    success: '#3DD46B',
-    danger: '#FF6B6B',
-    border: '#232A45',
+    text: Navy[300],
+    background: Navy[900],
+    backgroundElement: Navy[800],
+    backgroundSelected: Navy[850],
+    textSecondary: Navy[200],
+    primary: Navy[100],
+    onPrimary: Navy[900],
+    accent: Navy[50],
+    success: '#34D399',
+    danger: '#F87171',
+    border: Navy[700],
   },
 } as const;
 

@@ -8,7 +8,7 @@ import { StatBlock } from '@/components/stat-block';
 import { TermJar } from '@/components/term-jar';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useDashboard } from '@/hooks/use-dashboard';
 import { useAuth } from '@/lib/auth-context';
@@ -215,9 +215,11 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.four,
     padding: Spacing.four,
     gap: Spacing.two,
-    shadowColor: '#0F1222',
+    borderWidth: 1,
+    borderColor: Colors.light.border,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 2,
   },

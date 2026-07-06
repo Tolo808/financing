@@ -1,4 +1,4 @@
-import { useServerDocumentContext } from 'expo-router/html';
+import { ScrollViewStyleReset, useServerDocumentContext } from 'expo-router/html';
 
 // Customizes the root HTML document for the web export to add PWA support (manifest, icons,
 // theme-color, iOS "Add to Home Screen" meta tags, service worker registration) — none of this
@@ -12,8 +12,9 @@ export default function Root({ children }: { children: React.ReactNode }) {
     <html {...htmlAttributes} lang="en">
       <head>
         {headNodes}
+        <ScrollViewStyleReset />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="theme-color" content="#2337b8" />
+        <meta name="theme-color" content="#0A1120" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />

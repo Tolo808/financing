@@ -13,7 +13,7 @@ export function ProgressBar({ percent, color }: { percent: number; color?: strin
   const gradientId = color ? undefined : 'progressGrad';
 
   return (
-    <View style={[styles.track, { backgroundColor: theme.backgroundElement }]}>
+    <View style={[styles.track, { backgroundColor: theme.background }]}>
       <View style={[styles.fillClip, { width: `${clamped}%` }]}>
         <Svg width="100%" height={HEIGHT} viewBox="0 0 100 1" preserveAspectRatio="none">
           {gradientId && (

@@ -35,17 +35,20 @@ export default function LoginScreen() {
   const disabled = loading || !phone || !pin;
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { experimental_backgroundImage: `radial-gradient(circle at 50% -10%, ${theme.backgroundSelected}, ${theme.background} 60%)` } as object]}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.languageRow}>
           <LanguageToggle />
         </View>
 
         <View style={styles.content}>
-          <View style={[styles.logoMark, { backgroundColor: theme.primary }]}>
-            <ThemedText type="title" style={[styles.logoText, { color: theme.onPrimary }]}>
-              T
-            </ThemedText>
+          <View style={styles.logoGlowWrap}>
+            <View style={[styles.logoGlow, { backgroundColor: theme.primary }]} />
+            <View style={[styles.logoMark, { backgroundColor: theme.primary }]}>
+              <ThemedText type="title" style={[styles.logoText, { color: theme.onPrimary }]}>
+                T
+              </ThemedText>
+            </View>
           </View>
 
           <View style={styles.form}>
@@ -71,7 +74,10 @@ export default function LoginScreen() {
                 keyboardType="phone-pad"
                 placeholder="+2519XXXXXXXX"
                 placeholderTextColor={theme.textSecondary}
-                style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundElement }]}
+                style={[
+                  styles.input,
+                  { color: theme.text, backgroundColor: theme.backgroundElement, borderColor: theme.border },
+                ]}
               />
             </View>
 
@@ -84,7 +90,10 @@ export default function LoginScreen() {
                 onChangeText={setPin}
                 keyboardType="number-pad"
                 secureTextEntry
-                style={[styles.input, { color: theme.text, backgroundColor: theme.backgroundElement }]}
+                style={[
+                  styles.input,
+                  { color: theme.text, backgroundColor: theme.backgroundElement, borderColor: theme.border },
+                ]}
               />
             </View>
 
@@ -129,6 +138,17 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: MaxContentWidth * 0.5,
     gap: Spacing.five,
+  },
+  logoGlowWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoGlow: {
+    position: 'absolute',
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    opacity: 0.18,
   },
   logoMark: {
     width: 56,

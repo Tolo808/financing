@@ -14,7 +14,7 @@ export function PeriodCard({ settlement }: { settlement: Settlement }) {
   const hasArrears = Number(settlement.arrearsCarriedOut) > 0;
 
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
+    <ThemedView type="backgroundElement" style={[styles.card, { borderColor: theme.border }]}>
       <View style={styles.headerRow}>
         <ThemedText type="smallBold">
           {t('history.period')} {settlement.periodIndex}
@@ -61,9 +61,10 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.four,
     padding: Spacing.three,
     gap: Spacing.two,
-    shadowColor: '#0F1222',
+    borderWidth: 1,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 2,
   },

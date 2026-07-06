@@ -25,8 +25,8 @@
       "name": "Tolo Driver",
       "shortName": "Tolo",
       "lang": "en",
-      "themeColor": "#2337b8",
-      "backgroundColor": "#ffffff",
+      "themeColor": "#0A1120",
+      "backgroundColor": "#0A1120",
       "display": "standalone",
       "orientation": "portrait",
       "startUrl": "/"
@@ -36,7 +36,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#0A1120",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
