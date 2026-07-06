@@ -103,4 +103,7 @@ export const Spacing = {
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80, web: 96 }) ?? 0;
-export const MaxContentWidth = 800;
+// Caps the web layout at a real phone width — on native this has no effect (the screen itself
+// is already phone-sized), but on a wide desktop browser it keeps the app reading as a phone
+// app rather than stretching into a tablet/webpage-width column.
+export const MaxContentWidth = 430;

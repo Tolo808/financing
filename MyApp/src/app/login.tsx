@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    maxWidth: MaxContentWidth * 0.5,
+    maxWidth: MaxContentWidth - Spacing.four * 2,
     gap: Spacing.five,
   },
   logoGlowWrap: {
