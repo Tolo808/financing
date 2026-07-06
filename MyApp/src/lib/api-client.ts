@@ -21,8 +21,13 @@ function resolveDefaultBaseUrl(): string {
   return 'http://localhost:3000';
 }
 
+// EXPO_PUBLIC_API_BASE_URL is set only in the Netlify build environment (not in local .env), so
+// local dev / Expo Go keeps using LAN auto-detection while the deployed web build points at the
+// real admin API instead of the dev machine's localhost.
 const API_BASE_URL: string =
-  (Constants.expoConfig?.extra?.apiBaseUrl as string | undefined) ?? resolveDefaultBaseUrl();
+  process.env.EXPO_PUBLIC_API_BASE_URL ??
+  (Constants.expoConfig?.extra?.apiBaseUrl as string | undefined) ??
+  resolveDefaultBaseUrl();
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
