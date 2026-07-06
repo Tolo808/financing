@@ -1,0 +1,12 @@
+[build]
+  command = "npx expo export --platform web"
+  publish = "dist"
+
+# Expo Router's static export pre-renders each route to its own HTML file (history.html,
+# login.html, etc.) — Netlify's default clean-URL handling already resolves /history to
+# history.html, so no catch-all SPA redirect is used here (that would serve index.html's
+# content for every path, breaking direct navigation to other routes).
+[[redirects]]
+  from = "/*"
+  to = "/+not-found.html"
+  status = 404
