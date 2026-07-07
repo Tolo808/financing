@@ -19,6 +19,7 @@ export default function LoginScreen() {
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState<'phone' | 'pin' | null>(null);
 
   async function handleSubmit() {
     setError(null);
@@ -35,35 +36,35 @@ export default function LoginScreen() {
   const disabled = loading || !phone || !pin;
 
   return (
-    <ThemedView style={[styles.container, { experimental_backgroundImage: `radial-gradient(circle at 50% -10%, ${theme.backgroundSelected}, ${theme.background} 60%)` } as object]}>
+    <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.languageRow}>
           <LanguageToggle />
         </View>
 
         <View style={styles.content}>
-          <View style={styles.logoGlowWrap}>
-            <View style={[styles.logoGlow, { backgroundColor: theme.primary }]} />
-            <View style={[styles.logoMark, { backgroundColor: theme.primary }]}>
-              <ThemedText type="title" style={[styles.logoText, { color: theme.onPrimary }]}>
-                T
-              </ThemedText>
-            </View>
+          <View style={[styles.logoMark, { shadowColor: theme.text }]}>
+            <ThemedText type="title" style={[styles.logoText, { color: theme.accent }]}>
+              T
+            </ThemedText>
           </View>
 
-          <View style={styles.form}>
-            <ThemedText type="title" style={styles.title}>
-              {t('login.title')}
-            </ThemedText>
+          <ThemedText type="title" style={styles.title}>
+            {t('login.title')}
+          </ThemedText>
+          <ThemedText type="default" themeColor="textSecondary" style={styles.subtitle}>
+            {t('login.subtitle')}
+          </ThemedText>
 
-            {error && (
-              <View style={[styles.errorBox, { backgroundColor: theme.danger + '14' }]}>
-                <ThemedText type="small" style={{ color: theme.danger }}>
-                  {error}
-                </ThemedText>
-              </View>
-            )}
+          {error && (
+            <View style={[styles.errorBox, { backgroundColor: theme.danger + '14' }]}>
+              <ThemedText type="small" style={{ color: theme.danger }}>
+                {error}
+              </ThemedText>
+            </View>
+          )}
 
+          <View style={[styles.card, { backgroundColor: theme.backgroundElement, shadowColor: theme.text }]}>
             <View style={styles.field}>
               <ThemedText type="smallBold" themeColor="textSecondary" style={styles.fieldLabel}>
                 {t('login.phone')}
@@ -71,12 +72,18 @@ export default function LoginScreen() {
               <TextInput
                 value={phone}
                 onChangeText={setPhone}
+                onFocus={() => setFocusedField('phone')}
+                onBlur={() => setFocusedField(null)}
                 keyboardType="phone-pad"
                 placeholder="+2519XXXXXXXX"
                 placeholderTextColor={theme.textSecondary}
                 style={[
                   styles.input,
-                  { color: theme.text, backgroundColor: theme.backgroundElement, borderColor: theme.border },
+                  {
+                    color: theme.text,
+                    backgroundColor: theme.background,
+                    borderColor: focusedField === 'phone' ? theme.accent : theme.border,
+                  },
                 ]}
               />
             </View>
@@ -88,11 +95,17 @@ export default function LoginScreen() {
               <TextInput
                 value={pin}
                 onChangeText={setPin}
+                onFocus={() => setFocusedField('pin')}
+                onBlur={() => setFocusedField(null)}
                 keyboardType="number-pad"
                 secureTextEntry
                 style={[
                   styles.input,
-                  { color: theme.text, backgroundColor: theme.backgroundElement, borderColor: theme.border },
+                  {
+                    color: theme.text,
+                    backgroundColor: theme.background,
+                    borderColor: focusedField === 'pin' ? theme.accent : theme.border,
+                  },
                 ]}
               />
             </View>
@@ -102,14 +115,19 @@ export default function LoginScreen() {
               disabled={disabled}
               style={({ pressed }) => [
                 styles.button,
-                { backgroundColor: theme.primary, opacity: pressed || disabled ? 0.6 : 1 },
+                { backgroundColor: theme.primary, opacity: pressed || disabled ? 0.7 : 1 },
               ]}>
               {loading ? (
                 <ActivityIndicator color={theme.onPrimary} />
               ) : (
-                <ThemedText type="smallBold" style={[styles.buttonText, { color: theme.onPrimary }]}>
-                  {t('login.signIn')}
-                </ThemedText>
+                <>
+                  <ThemedText type="smallBold" style={[styles.buttonText, { color: theme.onPrimary }]}>
+                    {t('login.signIn')}
+                  </ThemedText>
+                  <ThemedText type="smallBold" style={[styles.buttonArrow, { color: theme.onPrimary }]}>
+                    →
+                  </ThemedText>
+                </>
               )}
             </Pressable>
           </View>
@@ -126,8 +144,8 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: Spacing.four,
+    paddingTop: Spacing.six,
   },
   languageRow: {
     position: 'absolute',
@@ -137,37 +155,44 @@ const styles = StyleSheet.create({
   content: {
     width: '100%',
     maxWidth: MaxContentWidth - Spacing.four * 2,
-    gap: Spacing.five,
-  },
-  logoGlowWrap: {
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoGlow: {
-    position: 'absolute',
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    opacity: 0.18,
   },
   logoMark: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
+    width: 76,
+    height: 76,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    marginBottom: Spacing.four,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 3,
   },
   logoText: {
-    fontSize: 26,
-    lineHeight: 30,
-  },
-  form: {
-    gap: Spacing.three,
+    fontSize: 32,
+    lineHeight: 36,
   },
   title: {
-    fontSize: 32,
-    lineHeight: 38,
-    marginBottom: Spacing.one,
+    fontSize: 28,
+    lineHeight: 34,
+    textAlign: 'center',
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginTop: Spacing.one,
+    marginBottom: Spacing.five,
+  },
+  card: {
+    width: '100%',
+    borderRadius: Spacing.five,
+    padding: Spacing.four,
+    gap: Spacing.three,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 24,
+    elevation: 2,
   },
   field: {
     gap: Spacing.one,
@@ -178,24 +203,32 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: Spacing.three,
+    borderWidth: 1.5,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
     fontSize: 16,
     fontWeight: '600',
   },
   errorBox: {
+    width: '100%',
     borderRadius: Spacing.two,
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
+    marginBottom: Spacing.three,
   },
   button: {
+    flexDirection: 'row',
     borderRadius: Spacing.three,
     paddingVertical: Spacing.three,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: Spacing.two,
+    gap: Spacing.two,
+    marginTop: Spacing.one,
   },
   buttonText: {
     fontSize: 16,
+  },
+  buttonArrow: {
+    fontSize: 18,
   },
 });

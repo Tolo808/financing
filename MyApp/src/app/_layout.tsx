@@ -1,4 +1,4 @@
-import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
@@ -37,8 +37,8 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider value={DarkTheme}>
-      <StatusBar style="light" />
+    <ThemeProvider value={DefaultTheme}>
+      <StatusBar style="dark" />
       <AnimatedSplashOverlay />
       {i18nReady && (
         <AppQueryProvider>

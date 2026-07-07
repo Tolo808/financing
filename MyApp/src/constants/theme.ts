@@ -22,46 +22,45 @@ export const Royal = {
   900: '#1a2875',
 } as const;
 
-// Navy palette — the driver app's own premium identity: a deep navy surface, a bright
-// "blueLight" accent for actions/highlights, and a slate text scale for readable contrast on
-// dark. Distinct from the admin portal's royal-blue-on-white by deliberate choice.
-export const Navy = {
-  50: '#7FB8FF', // blueLight, soft/secondary accent
-  100: '#4F9CF9', // blueLight, primary accent
-  200: '#8B98AF', // slate, secondary text
-  300: '#E7ECF3', // slate, primary text
-  700: '#26395C', // navy, border/divider — visible against both bg and card
-  800: '#13213A', // navy, elevated surface (cards)
-  850: '#1B2E4D', // navy, selected/pressed state — clearly lighter than a card
-  900: '#0A1120', // navy, base background — darkest
+// Light lavender palette — soft page background with white elevated cards, a deep-navy CTA
+// button, and an indigo accent, matching the reference design directly.
+export const Lavender = {
+  bg: '#EEF0F7', // page background
+  card: '#FFFFFF', // elevated surfaces (cards, inputs)
+  text: '#12141C', // primary text
+  textSecondary: '#6B7280', // secondary/muted text
+  accent: '#3B5BDB', // indigo accent — icon glyphs, focused input border, links
+  accentSoft: '#E7EAFB', // soft accent tint — selected pills, badges
+  buttonNavy: '#10163D', // solid CTA button background
+  border: '#E3E6EF', // card/input borders
 } as const;
 
 export const Colors = {
   light: {
-    text: Navy[300],
-    background: Navy[900],
-    backgroundElement: Navy[800],
-    backgroundSelected: Navy[850],
-    textSecondary: Navy[200],
-    primary: Navy[100],
-    onPrimary: Navy[900],
-    accent: Navy[50],
-    success: '#34D399',
-    danger: '#F87171',
-    border: Navy[700],
+    text: Lavender.text,
+    background: Lavender.bg,
+    backgroundElement: Lavender.card,
+    backgroundSelected: Lavender.accentSoft,
+    textSecondary: Lavender.textSecondary,
+    primary: Lavender.buttonNavy,
+    onPrimary: '#FFFFFF',
+    accent: Lavender.accent,
+    success: '#0E8A3E',
+    danger: '#D1293D',
+    border: Lavender.border,
   },
   dark: {
-    text: Navy[300],
-    background: Navy[900],
-    backgroundElement: Navy[800],
-    backgroundSelected: Navy[850],
-    textSecondary: Navy[200],
-    primary: Navy[100],
-    onPrimary: Navy[900],
-    accent: Navy[50],
-    success: '#34D399',
-    danger: '#F87171',
-    border: Navy[700],
+    text: Lavender.text,
+    background: Lavender.bg,
+    backgroundElement: Lavender.card,
+    backgroundSelected: Lavender.accentSoft,
+    textSecondary: Lavender.textSecondary,
+    primary: Lavender.buttonNavy,
+    onPrimary: '#FFFFFF',
+    accent: Lavender.accent,
+    success: '#0E8A3E',
+    danger: '#D1293D',
+    border: Lavender.border,
   },
 } as const;
 

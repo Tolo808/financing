@@ -1,5 +1,5 @@
 /**
- * The driver app always uses its own navy/blueLight/slate theme regardless of the phone's
+ * The driver app always uses its own light lavender/navy/indigo theme regardless of the phone's
  * system dark-mode setting — `Colors.light` and `Colors.dark` are identical (see theme.ts),
  * so there's nothing to switch between.
  */

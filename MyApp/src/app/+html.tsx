@@ -14,7 +14,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
         {headNodes}
         <ScrollViewStyleReset />
         <link rel="manifest" href="/manifest.webmanifest" />
-        <meta name="theme-color" content="#0A1120" />
+        <meta name="theme-color" content="#EEF0F7" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
