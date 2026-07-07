@@ -13,6 +13,18 @@ export default function Root({ children }: { children: React.ReactNode }) {
       <head>
         {headNodes}
         <ScrollViewStyleReset />
+        {/* Expo's reset sizes html/body/#root to height:100% — on mobile browsers that resolves
+            against the *large* viewport (as if the URL bar were hidden), so the app lays out
+            taller than what's actually on screen. The result: content looks spread out / "far",
+            and only snaps to the right size after you scroll (which hides the URL bar and
+            "resizes" the viewport). 100dvh (dynamic viewport height) always matches the visible
+            area, fixing that. Overrides the reset because it's declared after it with equal
+            specificity. */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html,body,#root{height:100vh;height:100dvh}`,
+          }}
+        />
         <link rel="manifest" href="/manifest.webmanifest" />
         <meta name="theme-color" content="#EEF0F7" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
