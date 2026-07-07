@@ -53,7 +53,7 @@ export default function DashboardScreen() {
           )}
 
           {data && (
-            <>
+            <View style={styles.cardsGroup}>
               <ThemedView type="backgroundElement" style={styles.card}>
                 <ThemedText type="smallBold">{t('dashboard.recoveryProgress')}</ThemedText>
                 <ThemedText type="title" style={styles.percent}>
@@ -146,7 +146,7 @@ export default function DashboardScreen() {
                   </ThemedText>
                 )}
               </ThemedView>
-            </>
+            </View>
           )}
         </ScrollView>
       </SafeAreaView>
@@ -176,10 +176,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
+    flexGrow: 1,
     width: '100%',
     maxWidth: MaxContentWidth,
     paddingHorizontal: Spacing.four,
     paddingBottom: BottomTabInset + Spacing.four,
+    gap: Spacing.three,
+  },
+  // On a tall phone screen, 3 fixed-size cards don't naturally fill the available height —
+  // centering the group as a block (rather than clustering at the top with a dead zone below,
+  // or spacing individual cards apart) puts the leftover space evenly above/below the group
+  // while keeping the cards themselves tightly grouped. flexGrow on scrollContent above is what
+  // gives this room to work with; if content ever exceeds the screen height, this still scrolls
+  // normally since flexGrow only sets a minimum.
+  cardsGroup: {
+    flex: 1,
+    justifyContent: 'center',
     gap: Spacing.three,
   },
   header: {
