@@ -73,6 +73,7 @@ export async function createDriver(input: CreateDriverInput, actorAdminId: strin
           toloTargetBirrOverride: input.toloTargetBirrOverride ?? null,
           toloRatePercentOverride: input.toloRatePercentOverride ?? null,
           language: input.language,
+          lenderId: input.lenderId,
         },
       });
 

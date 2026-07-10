@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Decimal } from "@prisma/client-runtime-utils";
 import { getCurrentAdmin } from "@/server/auth/current-admin";
 import { getDriver, updateDriver } from "@/server/services/driver-service";
+import { listLenders } from "@/server/services/lender-service";
 import {
   getDriverLedger,
   recordOrCorrectSettlement,
@@ -35,6 +36,9 @@ async function updateDriverAction(id: string, formData: FormData) {
 
   const pin = formData.get("pin");
   if (pin) raw.pin = String(pin);
+
+  const lenderId = formData.get("lenderId");
+  if (lenderId) raw.lenderId = String(lenderId);
 
   const parsed = updateDriverSchema.safeParse(raw);
   if (!parsed.success) throw new Error("Invalid driver input");
@@ -85,10 +89,11 @@ export default async function DriverDetailPage({
   const { id } = await params;
   const sp = await searchParams;
 
-  const [driver, ledger, settings] = await Promise.all([
+  const [driver, ledger, settings, lenders] = await Promise.all([
     getDriver(id),
     getDriverLedger(id, false),
     getGlobalSettings(),
+    listLenders(),
   ]);
   if (!driver) notFound();
   const latestPeriodIndex = ledger.length > 0 ? Math.max(...ledger.map((s) => s.periodIndex)) : 0;
@@ -210,6 +215,16 @@ export default async function DriverDetailPage({
                 defaultValue={driver.toloRatePercentOverride?.toString() ?? ""}
                 className={inputClass}
               />
+            </div>
+            <div>
+              <label className={labelClass}>Lender (SACCo/MFI)</label>
+              <select name="lenderId" defaultValue={driver.lenderId} className={inputClass}>
+                {lenders.map((lender) => (
+                  <option key={lender.id} value={lender.id}>
+                    {lender.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label className={labelClass}>Reset PIN (blank = keep current)</label>

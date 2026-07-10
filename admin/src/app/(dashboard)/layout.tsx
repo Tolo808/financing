@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </div>
 
-        <SidebarNav />
+        <SidebarNav showLenders={admin.role === "SUPER_ADMIN"} />
 
         <div className="border-t border-royal-700/60 px-3 py-4">
           <div className="flex items-center gap-3 rounded-lg px-3 py-2">

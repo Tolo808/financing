@@ -10,6 +10,20 @@ interface NavItem {
   icon: ReactNode;
 }
 
+const LENDERS_NAV_ITEM: NavItem = {
+  href: "/lenders",
+  label: "Lenders",
+  icon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-5 w-5">
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3 21h18M4 21V8l8-5 8 5v13M9 21v-6h6v6"
+      />
+    </svg>
+  ),
+};
+
 const NAV_ITEMS: NavItem[] = [
   {
     href: "/drivers",
@@ -66,12 +80,13 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export function SidebarNav() {
+export function SidebarNav({ showLenders = false }: { showLenders?: boolean }) {
   const pathname = usePathname();
+  const items = showLenders ? [...NAV_ITEMS, LENDERS_NAV_ITEM] : NAV_ITEMS;
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
-      {NAV_ITEMS.map((item) => {
+      {items.map((item) => {
         const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
         return (
           <Link

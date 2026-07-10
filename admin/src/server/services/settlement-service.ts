@@ -67,6 +67,7 @@ export async function recordOrCorrectSettlement(input: RecordSettlementInput, ac
       const created = await tx.settlement.create({
         data: {
           driverId: input.driverId,
+          lenderId: driver.lenderId,
           periodIndex: result.periodIndex,
           periodStart,
           periodEnd,

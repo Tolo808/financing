@@ -33,6 +33,12 @@ export default async function proxy(req: NextRequest) {
     return withCors(NextResponse.next());
   }
 
+  // The login page itself is under /mfi/:path* (so its own session gets refreshed if already
+  // signed in) but must never be redirect-target'd back to itself when unauthenticated.
+  if (pathname === "/mfi/login") {
+    return NextResponse.next();
+  }
+
   // Standard Supabase SSR session-refresh pattern: reading `getUser()` here (not just the
   // cookie) revalidates the token with Supabase and re-issues cookies if it was refreshed, so
   // Server Components downstream see an up-to-date session.
@@ -58,6 +64,9 @@ export default async function proxy(req: NextRequest) {
     if (isAdminApi) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    if (pathname.startsWith("/mfi")) {
+      return NextResponse.redirect(new URL("/mfi/login", req.nextUrl.origin));
+    }
     return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
   }
 
@@ -70,6 +79,8 @@ export const config = {
     "/settlement/:path*",
     "/settings/:path*",
     "/audit-log/:path*",
+    "/lenders/:path*",
+    "/mfi/:path*",
     "/api/admin/:path*",
     "/api/driver/:path*",
   ],

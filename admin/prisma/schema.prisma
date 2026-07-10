@@ -73,6 +73,9 @@ model Driver {
   toloTargetBirrOverride  Decimal? @db.Decimal(14, 2)
   toloRatePercentOverride Decimal? @db.Decimal(5, 2)
 
+  lenderId String
+  lender   Lender @relation(fields: [lenderId], references: [id])
+
   active    Boolean  @default(true)
   language  String   @default("en")
   createdAt DateTime @default(now())
@@ -82,7 +85,36 @@ model Driver {
   notifications         Notification[]
   cashCollectionEntries CashCollectionEntry[]
 
+  @@index([lenderId])
   @@map("drivers")
+}
+
+model Lender {
+  id           String   @id @default(cuid())
+  name         String
+  contactEmail String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  drivers     Driver[]
+  settlements Settlement[]
+  mfiUsers    MfiUser[]
+
+  @@map("lenders")
+}
+
+model MfiUser {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  authUserId String?  @unique
+  name       String
+  lenderId   String
+  lender     Lender   @relation(fields: [lenderId], references: [id])
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("mfi_users")
 }
 
 model GlobalSettings {
@@ -100,6 +132,12 @@ model Settlement {
   id       String @id @default(cuid())
   driverId String
   driver   Driver @relation(fields: [driverId], references: [id])
+
+  // Snapshotted from driver.lenderId at creation time, same pattern as toloRatePercentApplied
+  // below — kept for audit/future-proofing if a driver is ever reassigned to a different lender.
+  // Not currently read anywhere; v1 lender-scoped queries filter by the live Driver.lenderId.
+  lenderId String
+  lender   Lender @relation(fields: [lenderId], references: [id])
 
   periodIndex Int
   periodStart DateTime
@@ -129,6 +167,7 @@ model Settlement {
   cashCollectionEntry CashCollectionEntry?
 
   @@index([driverId, periodIndex, status])
+  @@index([lenderId])
   @@map("settlements")
 }
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { getCurrentAdmin } from "@/server/auth/current-admin";
 import { listDrivers, createDriver } from "@/server/services/driver-service";
+import { listLenders } from "@/server/services/lender-service";
 import { createDriverSchema } from "@/lib/validation";
 
 async function createDriverAction(formData: FormData) {
@@ -17,6 +18,7 @@ async function createDriverAction(formData: FormData) {
     termMonths: Number(formData.get("termMonths")),
     cadence: formData.get("cadence") || "MONTHLY",
     language: formData.get("language") || "en",
+    lenderId: formData.get("lenderId"),
   });
   if (!parsed.success) {
     throw new Error("Invalid driver input");
@@ -31,7 +33,7 @@ const inputClass =
 const labelClass = "block text-sm font-medium text-slate-700";
 
 export default async function DriversPage() {
-  const drivers = await listDrivers();
+  const [drivers, lenders] = await Promise.all([listDrivers(), listLenders()]);
   const activeCount = drivers.filter((d) => d.active).length;
   const totalPortfolio = drivers.reduce((sum, d) => sum + Number(d.saccoFinancedTotal), 0);
 
@@ -140,6 +142,16 @@ export default async function DriversPage() {
               <select name="language" className={inputClass}>
                 <option value="en">English</option>
                 <option value="am">Amharic</option>
+              </select>
+            </div>
+            <div className="col-span-2">
+              <label className={labelClass}>Lender (SACCo/MFI)</label>
+              <select name="lenderId" required className={inputClass}>
+                {lenders.map((lender) => (
+                  <option key={lender.id} value={lender.id}>
+                    {lender.name}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="col-span-2">

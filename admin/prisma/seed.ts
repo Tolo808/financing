@@ -68,6 +68,24 @@ async function main() {
     },
   });
 
+  const lender = await db.lender.upsert({
+    where: { id: "demo-lender" },
+    update: {},
+    create: { id: "demo-lender", name: "Addis Credit & Savings SACCo", contactEmail: "ops@addiscredit.et" },
+  });
+
+  const mfiAuthUserId = await getOrCreateAdminAuthUser("mfi@addiscredit.et", "ChangeMe123!");
+  await db.mfiUser.upsert({
+    where: { email: "mfi@addiscredit.et" },
+    update: { authUserId: mfiAuthUserId, lenderId: lender.id },
+    create: {
+      email: "mfi@addiscredit.et",
+      name: "Addis Credit Portfolio Manager",
+      authUserId: mfiAuthUserId,
+      lenderId: lender.id,
+    },
+  });
+
   // PLACEHOLDER — these SACCo-financed totals are demo figures only.
   // Replace with each real driver's actual SACCo contract amount via the admin UI
   // before entering any real driver's data. See README "Verify against the real SACCo agreement".
@@ -83,6 +101,7 @@ async function main() {
       termMonths: 12,
       cadence: "MONTHLY",
       language: "en",
+      lenderId: lender.id,
     },
   });
 
@@ -98,6 +117,7 @@ async function main() {
       termMonths: 18,
       cadence: "MONTHLY",
       language: "am",
+      lenderId: lender.id,
     },
   });
 
@@ -130,6 +150,7 @@ async function main() {
 
   console.log("Seed complete.");
   console.log(`Admin login: admin@tolo.et / ChangeMe123! (change this immediately)`);
+  console.log(`MFI portal login: mfi@addiscredit.et / ChangeMe123! (change this immediately)`);
   console.log(`Driver 1: ${driver1.phone} / PIN 1234 (${driver1.name})`);
   console.log(`Driver 2: ${driver2.phone} / PIN 5678 (${driver2.name})`);
 }

@@ -29,6 +29,7 @@ export const createDriverSchema = z.object({
   toloTargetBirrOverride: z.number().positive().nullish(),
   toloRatePercentOverride: z.number().positive().max(100).nullish(),
   language: languageEnum.default("en"),
+  lenderId: z.string().min(1),
 });
 
 export const updateDriverSchema = z.object({
@@ -42,6 +43,19 @@ export const updateDriverSchema = z.object({
   toloRatePercentOverride: z.number().positive().max(100).nullish(),
   language: languageEnum.optional(),
   active: z.boolean().optional(),
+  lenderId: z.string().min(1).optional(),
+});
+
+export const createLenderSchema = z.object({
+  name: z.string().min(1),
+  contactEmail: z.string().email().nullish(),
+});
+
+export const createMfiUserSchema = z.object({
+  name: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(6),
+  lenderId: z.string().min(1),
 });
 
 export const recordSettlementSchema = z.object({
